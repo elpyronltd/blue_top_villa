@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueTop Villa | The Pinnacle of Luxury</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #003cbe;
+            --gold: #D4AF37;
+            --deep-blue: #0a0068;
+            --glass: rgba(255, 255, 255, 0.85);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+            color: #1a1a1a;
+        }
+
+        h1,
+        h2,
+        h3,
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-blue), #60a5fa);
+            z-index: 100;
+        }
+
+        /* Video Background */
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        #bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.65);
+        }
+
+        /* Glassmorphism Navigation */
+        .glass-nav {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 60, 190, 0.08);
+            border-radius: 999px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Advanced Hamburger Toggle */
+        .menu-toggle {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            cursor: pointer;
+            z-index: 60;
+        }
+
+        .menu-bar {
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            background-color: var(--deep-blue);
+            left: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .bar-1 {
+            top: 14px;
+        }
+
+        .bar-2 {
+            top: 24px;
+        }
+
+        .menu-open .bar-1 {
+            transform: translateY(5px) rotate(45deg);
+        }
+
+        .menu-open .bar-2 {
+            transform: translateY(-5px) rotate(-45deg);
+        }
+
+        /* Mobile Overlay Menu */
+        #mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 55;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: right 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        #mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-link {
+            font-size: 2.5rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--deep-blue);
+            margin: 1rem 0;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Hero Text Styles */
+        #hero-logo-outline {
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 800;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+            letter-spacing: 1.5rem;
+            line-height: 1;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #003cbe 0%, #0a0068 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(0, 60, 190, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 60, 190, 0.35);
+        }
+
+        .content-section {
+            position: relative;
+            z-index: 10;
+            background: white;
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .suite-card:hover img {
+            transform: scale(1.08);
+        }
+
+        /* Smooth Hide Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 10px;
+        }
+
+
+
+        .footer-heading {
+            font-family: 'Playfair Display', serif;
+            color: var(--deep-blue);
+            font-size: 18px;
+            font-weight: 900;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="scroll-progress"></div>
+
+    <!-- Parallax Video Background -->
+    <div id="video-container">
+        <video id="bg-video" autoplay muted loop playsinline
+            poster="https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=1920">
+            <source src="./assets/vids/hero-video.mp4" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20"></div>
+    </div>
+
+    <!-- Responsive Navigation -->
+    <header id="main-header" class="fixed top-0 left-0 w-full z-50 px-4 md:px-8 pt-6 opacity-0">
+        <nav class="glass-nav max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 py-4">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer group">
+                <div
+                    class="w-10 h-10 bg-[#003cbe] rounded-full flex items-center justify-center font-bold text-white text-xl transition-transform group-hover:rotate-12">
+                    B</div>
+                <span class="font-extrabold text-xl tracking-tighter text-[#0a0068]">BLUE<span
+                        class="font-light">TOP</span></span>
+            </div>
+
+            <!-- Desktop Links -->
+            <div
+                class="hidden lg:flex items-center space-x-10 text-[11px] font-bold uppercase tracking-[0.2em] text-[#0a0068]">
+                <a href="#"
+                    class="hover:text-[#003cbe] transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-[#003cbe] hover:after:w-full after:transition-all">About</a>
+                <a href="#"
+                    class="hover:text-[#003cbe] transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-[#003cbe] hover:after:w-full after:transition-all">The
+                    Suites</a>
+                <a href="#"
+                    class="hover:text-[#003cbe] transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-[#003cbe] hover:after:w-full after:transition-all">Facilities</a>
+                <a href="#"
+                    class="hover:text-[#003cbe] transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-[#003cbe] hover:after:w-full after:transition-all">Events</a>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex items-center space-x-4">
+                <button
+                    class="hidden sm:block text-[11px] font-bold uppercase tracking-widest text-[#0a0068] px-4">Enquire</button>
+                <button class="btn-premium px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest">Book
+                    Now</button>
+
+                <!-- Advanced Toggle -->
+                <div class="menu-toggle lg:hidden" id="menu-trigger">
+                    <div class="menu-bar bar-1"></div>
+                    <div class="menu-bar bar-2"></div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu">
+        <a href="#" class="mobile-link">The Estate</a>
+        <a href="#" class="mobile-link">The Collection</a>
+        <a href="#" class="mobile-link">Experiences</a>
+        <a href="#" class="mobile-link">Wellness</a>
+        <a href="#" class="mobile-link">Contact</a>
+        <div class="mt-12 flex space-x-6 opacity-0" id="mobile-socials">
+            <span class="text-xs font-bold uppercase tracking-widest text-blue-600">Instagram</span>
+            <span class="text-xs font-bold uppercase tracking-widest text-blue-600">Twitter</span>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="h-[110vh] flex items-center justify-center relative">
+        <div class="text-center px-6">
+            <h1 id="hero-logo-outline">BTV</h1>
+            <p id="hero-subtitle"
+                class="text-white text-base md:text-xl font-light tracking-[0.8em] uppercase mt-6 opacity-90">Beyond
+                Ordinary Luxury</p>
+        </div>
+
+        <div class="absolute bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center">
+            <div class="w-[1px] h-16 bg-white/30 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1/2 bg-white animate-[scrollAnim_2s_infinite]"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="content-section rounded-t-[40px] md:rounded-t-[80px] -mt-20 overflow-hidden">
+
+        <!-- Welcome Story -->
+        <section class="max-w-6xl mx-auto px-6 py-32">
+            <div class="grid md:grid-cols-2 gap-20 items-center">
+                <div class="reveal-up">
+                    <span class="text-[#003cbe] font-bold uppercase tracking-[0.3em] text-xs mb-6 block">Welcome to
+                        BlueTop</span>
+                    <h2 class="text-4xl md:text-7xl text-[#0a0068] mb-10 leading-[1.1]">The Art of <br>Coastal Living
+                    </h2>
+                    <p class="text-gray-500 text-lg leading-relaxed mb-10">
+                        Nestled where the azure sky meets the deep sapphire sea, BlueTop Villa is more than a
+                        destination. It is a philosophy of relaxation, crafted over decades for those who demand
+                        excellence in every detail.
+                    </p>
+                    <div class="flex items-center space-x-8">
+                        <button
+                            class="bg-gray-100 text-[#0a0068] px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">Our
+                            Story</button>
+                        <div class="flex flex-col">
+                            <span class="text-3xl font-serif text-[#003cbe]">30+</span>
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-gray-400">Years of
+                                Excellence</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative reveal-up">
+                    <div class="aspect-[4/5] rounded-[30px] overflow-hidden shadow-2xl">
+                        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200" alt="Resort"
+                            class="w-full h-full object-cover">
+                    </div>
+                    <div
+                        class="absolute -bottom-10 -right-4 md:-right-10 bg-white p-6 md:p-10 rounded-2xl shadow-xl max-w-[280px]">
+                        <p class="text-[#0a0068] font-serif text-xl italic">"The most breathtaking sunset we've ever
+                            witnessed."</p>
+                        <p class="mt-4 text-xs font-bold text-gray-400 uppercase tracking-widest">— The Harrington
+                            Family</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Collection Grid -->
+        <section class="py-32 bg-[#f8f9fa]">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-20 reveal-up">
+                    <div class="max-w-2xl">
+                        <h2 class="text-[#0a0068] text-4xl md:text-6xl mb-6">The Private Collection</h2>
+                        <p class="text-gray-500 text-lg">Curated living spaces that redefine your relationship with the
+                            horizon. Select your sanctuary.</p>
+                    </div>
+                    <a href="#"
+                        class="mt-8 md:mt-0 text-[#003cbe] font-bold text-xs uppercase tracking-widest border-b-2 border-[#003cbe] pb-2">View
+                        Full Inventory</a>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-10">
+                    <!-- Suite 1 -->
+                    <div class="suite-card group reveal-up">
+                        <div class="relative overflow-hidden rounded-[30px] h-[500px]">
+                            <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=800"
+                                class="w-full h-full object-cover transition-transform duration-1000">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0068]/80 to-transparent opacity-60">
+                            </div>
+                            <div class="absolute bottom-8 left-8 right-8 text-white">
+                                <span class="text-[10px] uppercase tracking-[0.3em] font-bold opacity-80">Penthouse
+                                    Suite</span>
+                                <h3 class="text-3xl mt-2">Azure Infinity</h3>
+                                <div class="flex justify-between items-center mt-6 pt-6 border-t border-white/20">
+                                    <span class="font-bold">$1,250<span
+                                            class="text-xs font-light opacity-70">/night</span></span>
+                                    <button
+                                        class="text-[10px] font-bold uppercase tracking-widest bg-white text-[#0a0068] px-4 py-2 rounded-full">Reserve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Suite 2 -->
+                    <div class="suite-card group reveal-up" style="transition-delay: 0.1s">
+                        <div class="relative overflow-hidden rounded-[30px] h-[500px]">
+                            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=800"
+                                class="w-full h-full object-cover transition-transform duration-1000">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0068]/80 to-transparent opacity-60">
+                            </div>
+                            <div class="absolute bottom-8 left-8 right-8 text-white">
+                                <span class="text-[10px] uppercase tracking-[0.3em] font-bold opacity-80">Royal
+                                    Villa</span>
+                                <h3 class="text-3xl mt-2">Golden Horizon</h3>
+                                <div class="flex justify-between items-center mt-6 pt-6 border-t border-white/20">
+                                    <span class="font-bold">$2,400<span
+                                            class="text-xs font-light opacity-70">/night</span></span>
+                                    <button
+                                        class="text-[10px] font-bold uppercase tracking-widest bg-white text-[#0a0068] px-4 py-2 rounded-full">Reserve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Suite 3 -->
+                    <div class="suite-card group reveal-up" style="transition-delay: 0.2s">
+                        <div class="relative overflow-hidden rounded-[30px] h-[500px]">
+                            <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=800"
+                                class="w-full h-full object-cover transition-transform duration-1000">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0068]/80 to-transparent opacity-60">
+                            </div>
+                            <div class="absolute bottom-8 left-8 right-8 text-white">
+                                <span class="text-[10px] uppercase tracking-[0.3em] font-bold opacity-80">Garden
+                                    Escape</span>
+                                <h3 class="text-3xl mt-2">The Sanctuary</h3>
+                                <div class="flex justify-between items-center mt-6 pt-6 border-t border-white/20">
+                                    <span class="font-bold">$850<span
+                                            class="text-xs font-light opacity-70">/night</span></span>
+                                    <button
+                                        class="text-[10px] font-bold uppercase tracking-widest bg-white text-[#0a0068] px-4 py-2 rounded-full">Reserve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Facilities (Experience Section) -->
+        <section class="py-32 max-w-7xl mx-auto px-6">
+            <div class="bg-[#003cbe] rounded-[40px] p-10 md:p-24 text-white overflow-hidden relative">
+                <div class="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+                    <div class="reveal-up">
+                        <h2 class="text-5xl md:text-7xl mb-8 leading-tight">Unrivaled <br>Amenities</h2>
+                        <p class="text-blue-100 text-lg mb-12 leading-relaxed opacity-90">Beyond the architecture lies a
+                            world of curated experiences, from Michelin-star dining to our subterranean crystal spa
+                            sanctuary.</p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-16">
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg">Heli-Transfer</h4>
+                                    <p class="text-blue-200 text-sm">Direct access from international hubs.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg">24/7 Butler</h4>
+                                    <p class="text-blue-200 text-sm">Personalized service at every turn.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button
+                            class="bg-white text-[#003cbe] px-10 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:shadow-2xl transition-all">Explore
+                            the Grounds</button>
+                    </div>
+                    <div class="reveal-up hidden lg:grid grid-cols-2 gap-6 relative">
+                        <div class="space-y-6 transform -translate-y-12">
+                            <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=400"
+                                class="rounded-[30px] shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=400"
+                                class="rounded-[30px] shadow-2xl">
+                        </div>
+                        <div class="space-y-6 pt-12">
+                            <img src="./assets/images/pic2.avif"
+                                class="rounded-[30px] shadow-2xl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-white pt-32 pb-16 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-16 mb-24">
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center space-x-3 mb-8">
+                            <div
+                                class="w-12 h-12 bg-[#003cbe] rounded-full flex items-center justify-center font-bold text-white text-2xl">
+                                B</div>
+                            <span class="text-[#0a0068] text-2xl font-extrabold tracking-tighter">BLUETOP <span
+                                    class="font-light">VILLA</span></span>
+                        </div>
+                        <p class="text-gray-400 max-w-sm mb-10 leading-relaxed text-lg font-light">Crafting exceptional
+                            moments in the most beautiful corners of the world since 1994.</p>
+                        <div class="flex space-x-12">
+                            <div>
+                                <h6 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-4">Email Us
+                                </h6>
+                                <p class="text-[#0a0068] font-bold">stay@bluetop.com</p>
+                            </div>
+                            <div>
+                                <h6 class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-4">Call Us
+                                </h6>
+                                <p class="text-[#0a0068] font-bold">+1 (888) BLUE TOP</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="text-[#0a0068] font-bold uppercase tracking-[0.2em] text-xs mb-8">Experience</h5>
+                        <ul class="space-y-4 text-gray-500 font-medium">
+                            <li><a href="#" class="hover:text-[#003cbe] transition-colors">The Rooms</a></li>
+                            <li><a href="#" class="hover:text-[#003cbe] transition-colors">Dining & Bars</a></li>
+                            <li><a href="#" class="hover:text-[#003cbe] transition-colors">Spa & Wellness</a></li>
+                            <li><a href="#" class="hover:text-[#003cbe] transition-colors">Yacht Charter</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="text-[#0a0068] font-bold uppercase tracking-[0.2em] text-xs mb-8">Newsletter</h5>
+                        <p class="text-sm text-gray-400 mb-6">Receive exclusive offers and season opening dates.</p>
+                        <div class="flex items-center border-b border-gray-200 py-2">
+                            <input type="email" placeholder="Email Address"
+                                class="bg-transparent border-none focus:outline-none text-sm w-full">
+                            <button class="text-[#003cbe] font-bold text-xs uppercase tracking-widest">Join</button>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="border-t border-gray-100 pt-12 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold">
+                    <p>&copy; 2024 BlueTop Villa Hotel. Established for the Extraordinary.</p>
+                    <div class="flex space-x-8 mt-6 md:mt-0">
+                        <a href="#" class="hover:text-[#003cbe]">Privacy</a>
+                        <a href="#" class="hover:text-[#003cbe]">Terms</a>
+                        <a href="#" class="hover:text-[#003cbe]">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- <footer class="bg-transparent text-white pt-20 pb-10 px-6 rounded-t-[50px]">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-12 mb-20">
+                    <div class="col-span-2">
+                        <div class="flex items-center space-x-2 mb-8">
+                            <div
+                                class="w-10 h-10 bg-[#003cbe] rounded-full flex items-center justify-center font-bold text-white text-xl">
+                                B</div>
+                            <span class="villa-blue text-2xl tracking-tighter">BLUETOP VILLA</span>
+                        </div>
+                        <p class="text-black max-w-sm mb-8 leading-relaxed">The ultimate destination for those who seek
+                            the extraordinary. Experience the synergy of sky, sea, and service.</p>
+                        <div class="flex space-x-4">
+                            <button class="btn-blue px-6 py-2 rounded-lg font-bold text-sm">Rate Your Stay</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="footer-heading mb-6 uppercase tracking-widest">Navigation</h5>
+                        <ul class="space-y-4 text-black">
+                            <li><a href="#" class="hover:text-blue-600">Suites</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Experiences</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Private Events</a></li>
+                            <li><a href="#" class="hover:text-blue-600">Spa & Wellness</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="footer-heading mb-6 uppercase tracking-widest">Stay in Touch</h5>
+                        <ul class="space-y-4 text-black">
+                            <li>concierge@bluetopvilla.com</li>
+                            <li>+1 (800) BLUE-TOP</li>
+                            <li class="pt-4 flex space-x-4">
+                                <span class="hover:text-blue-600 cursor-pointer">IG</span>
+                                <span class="hover:text-blue-600 cursor-pointer">TW</span>
+                                <span class="hover:text-blue-600 cursor-pointer">FB</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div
+                    class="border-t border-gray-800 pt-10 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 uppercase tracking-widest">
+                    <p>&copy; 2024 BlueTop Villa Hotel. All Rights Reserved.</p>
+                    <div class="flex space-x-8 mt-4 md:mt-0">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Use</a>
+                    </div>
+                </div>
+            </div>
+        </footer> -->
+
+
+    </main>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Mobile Menu Logic
+        const menuTrigger = document.getElementById('menu-trigger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        const mobileSocials = document.getElementById('mobile-socials');
+        let isMenuOpen = false;
+
+        menuTrigger.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            menuTrigger.classList.toggle('menu-open');
+            mobileMenu.classList.toggle('active');
+
+            if (isMenuOpen) {
+                gsap.to(mobileLinks, {
+                    opacity: 1,
+                    y: 0,
+                    stagger: 0.1,
+                    duration: 0.8,
+                    ease: "power4.out",
+                    delay: 0.3
+                });
+                gsap.to(mobileSocials, {
+                    opacity: 1,
+                    duration: 0.5,
+                    delay: 0.8
+                });
+                document.body.style.overflow = 'hidden';
+            } else {
+                gsap.to(mobileLinks, {
+                    opacity: 0,
+                    y: 20,
+                    duration: 0.3
+                });
+                gsap.to(mobileSocials, { opacity: 0 });
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // 2. Scroll Progress
+        gsap.to("#scroll-progress", {
+            width: "100%",
+            ease: "none",
+            scrollTrigger: { scrub: 0.3 }
+        });
+
+        // 3. Hero Animations
+        const heroTl = gsap.timeline();
+
+        // Initial Page Load
+        window.addEventListener('load', () => {
+            gsap.to("#main-header", { opacity: 1, y: 0, duration: 1.2, delay: 0.5 });
+
+            gsap.from("#hero-logo-outline", {
+                scale: 0.8,
+                opacity: 0,
+                duration: 2,
+                ease: "power3.out"
+            });
+
+            gsap.from("#hero-subtitle", {
+                y: 30,
+                opacity: 0,
+                duration: 1.5,
+                delay: 0.8,
+                ease: "power3.out"
+            });
+        });
+
+        // Hero Scroll Effects
+        const heroScrollTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#hero",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+
+        heroScrollTl.to("#hero-logo-outline", { scale: 0.6, opacity: 0, y: -100 });
+        heroScrollTl.to("#hero-subtitle", { y: -50, opacity: 0 }, 0);
+
+        // 4. Parallax Background
+        gsap.to("#bg-video", {
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1
+            },
+            scale: 1.3,
+            filter: "brightness(0.35) blur(8px)"
+        });
+
+        // 5. Reveal Animations
+        const revealElements = document.querySelectorAll(".reveal-up");
+        revealElements.forEach((el) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power3.out"
+            });
+        });
+
+        // 6. Sticky Header Appearance
+        ScrollTrigger.create({
+            trigger: "main",
+            start: "top 10%",
+            onEnter: () => gsap.to(".glass-nav", { padding: "0.5rem 1.5rem", borderRadius: "100px", boxShadow: "0 10px 40px rgba(0,0,0,0.1)" }),
+            onLeaveBack: () => gsap.to(".glass-nav", { padding: "1rem 2.5rem", borderRadius: "999px" })
+        });
+
+    </script>
+    <style>
+        @keyframes scrollAnim {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(200%);
+            }
+        }
+    </style>
+</body>
+
+</html>

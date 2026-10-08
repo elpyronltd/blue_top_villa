@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueTop Villa | A Premium Escape</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pool-blue: #0077be;
+            --gold: #d4af37;
+            --glass: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .logo-text {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Fixed Background Video Context - Adjusted for better parallax room */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120vh; /* Taller than screen to allow movement without gaps */
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        #bg-video {
+            min-width: 100%;
+            min-height: 120%; /* Ensure coverage */
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.7);
+            will-change: transform;
+        }
+
+        /* Glassmorphism Header */
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            z-index: 1000;
+            padding: 0.75rem 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px 0 rgba(0, 119, 190, 0.2);
+            opacity: 0; 
+            visibility: hidden;
+        }
+
+        .header-glow {
+            position: absolute;
+            inset: -1px;
+            border-radius: 50px;
+            background: linear-gradient(90deg, transparent, var(--pool-blue), var(--gold), transparent);
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(5px);
+        }
+
+        /* Hero Styling */
+        #hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: white;
+            background: transparent;
+        }
+
+        .hero-logo-outline {
+            font-size: clamp(4rem, 15vw, 10rem);
+            font-weight: 700;
+            letter-spacing: 10px;
+            color: transparent;
+            -webkit-text-stroke: 2px white;
+            position: absolute;
+            z-index: 5;
+        }
+
+        /* Content Sections */
+        section {
+            padding: 120px 5%;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.88); /* Subtle transparency */
+        }
+
+        .section-dark {
+            background: rgba(0, 0, 0, 0.45);
+            color: white;
+            backdrop-filter: blur(8px);
+        }
+
+        .gold-btn {
+            background: var(--gold);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s;
+            display: inline-block;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        .gold-btn:hover {
+            background: #b8860b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .outline-btn {
+            border: 2px solid var(--pool-blue);
+            color: var(--pool-blue);
+            padding: 10px 25px;
+            border-radius: 30px;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .outline-btn:hover {
+            background: var(--pool-blue);
+            color: white;
+        }
+
+        .suite-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .suite-card:hover {
+            transform: translateY(-15px);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 80px 5% 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%); opacity: 1;}
+            40% {transform: translateY(-15px) translateX(-50%); opacity: 0.5;}
+            60% {transform: translateY(-7px) translateX(-50%);}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Video Container -->
+    <div class="video-container">
+        <video autoplay muted loop playsinline id="bg-video" poster="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80">
+            <source src="assets/vids/hero-video.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Header Navigation -->
+    <header id="main-header">
+        <div class="header-glow"></div>
+        <div class="flex items-center">
+            <a href="#" class="text-2xl font-bold logo-text tracking-tighter" style="color: var(--pool-blue)">BTV</a>
+        </div>
+        
+        <nav class="hidden lg:flex space-x-10 font-semibold text-gray-800">
+            <a href="#about" class="hover:text-blue-600 transition-colors">About Us</a>
+            <a href="#suites" class="hover:text-blue-600 transition-colors">Suites</a>
+            <a href="#facilities" class="hover:text-blue-600 transition-colors">Facilities</a>
+            <a href="#gallery" class="hover:text-blue-600 transition-colors">Gallery</a>
+        </nav>
+
+        <div class="flex items-center space-x-6">
+            <a href="#" class="text-gray-600 hover:text-black hidden sm:block font-medium">Login</a>
+            <a href="#" class="gold-btn shadow-lg">Book Now</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div id="hero-logo" class="hero-logo-outline">BTV</div>
+        <div class="scroll-down text-white flex flex-col items-center">
+            <span class="text-xs uppercase tracking-widest mb-3 opacity-80">Discover Paradise</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+    </section>
+
+    <!-- Brief History Section -->
+    <section id="about">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+            <div class="reveal">
+                <span class="text-blue-600 font-bold tracking-widest uppercase text-sm block mb-2">Our Legacy</span>
+                <h2 class="text-5xl lg:text-6xl font-bold mt-2 mb-8 text-gray-900 leading-tight">A Sanctuary Built on Luxury.</h2>
+                <p class="text-gray-600 text-lg leading-relaxed mb-10">
+                    Since 1994, BlueTop Villa has stood as a beacon of coastal refinement. Born from a passion for the horizon, our estate has evolved from a private sanctuary into the world's most sought-after destination for those who seek the extraordinary.
+                </p>
+                <a href="#" class="outline-btn py-4 px-10">Explore Our History</a>
+            </div>
+            <div class="relative reveal">
+                <div class="w-full h-[500px] bg-cover bg-center rounded-[40px] shadow-2xl" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80')"></div>
+                <div class="absolute -bottom-8 -left-8 bg-white p-10 rounded-3xl shadow-2xl border-l-8 border-yellow-500">
+                    <p class="text-5xl font-bold text-blue-900">30+</p>
+                    <p class="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Years of Grace</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Suites Section -->
+    <section id="suites" class="section-dark py-32">
+        <div class="max-w-4xl mx-auto text-center mb-20">
+            <h2 class="text-5xl lg:text-6xl font-bold mb-6">The Suite Collection</h2>
+            <p class="text-gray-200 text-lg">Curated living spaces designed to blur the line between indoor comfort and outdoor majesty.</p>
+        </div>
+
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
+            <!-- Suite 1 -->
+            <div class="suite-card text-gray-900 reveal">
+                <div class="h-72 overflow-hidden">
+                    <div class="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80')"></div>
+                </div>
+                <div class="p-10">
+                    <h3 class="text-2xl font-bold mb-3">Azure Ocean Suite</h3>
+                    <p class="text-gray-500 mb-8 text-sm leading-relaxed">Infinity plunge pools meeting the sky. The ultimate horizon experience.</p>
+                    <div class="flex justify-between items-center border-t pt-6">
+                        <span class="font-bold text-blue-600 text-lg">$450 <small class="text-gray-400 font-normal">/ night</small></span>
+                        <a href="#" class="text-gold font-bold hover:underline tracking-tight">Reserve</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Suite 2 -->
+            <div class="suite-card text-gray-900 reveal">
+                <div class="h-72 overflow-hidden">
+                    <div class="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80')"></div>
+                </div>
+                <div class="p-10">
+                    <h3 class="text-2xl font-bold mb-3">Royal Penthouse</h3>
+                    <p class="text-gray-500 mb-8 text-sm leading-relaxed">Bi-level luxury featuring 24/7 butler service and a private glass elevator.</p>
+                    <div class="flex justify-between items-center border-t pt-6">
+                        <span class="font-bold text-blue-600 text-lg">$1,200 <small class="text-gray-400 font-normal">/ night</small></span>
+                        <a href="#" class="text-gold font-bold hover:underline tracking-tight">Reserve</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Suite 3 -->
+            <div class="suite-card text-gray-900 reveal">
+                <div class="h-72 overflow-hidden">
+                    <div class="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-700" style="background-image: url('https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80')"></div>
+                </div>
+                <div class="p-10">
+                    <h3 class="text-2xl font-bold mb-3">Golden Sands Villa</h3>
+                    <p class="text-gray-500 mb-8 text-sm leading-relaxed">Tucked away in the dunes. Pure privacy with direct access to the crystal tides.</p>
+                    <div class="flex justify-between items-center border-t pt-6">
+                        <span class="font-bold text-blue-600 text-lg">$680 <small class="text-gray-400 font-normal">/ night</small></span>
+                        <a href="#" class="text-gold font-bold hover:underline tracking-tight">Reserve</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-20">
+            <a href="#" class="gold-btn py-4 px-12 shadow-2xl">View All Residences</a>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section id="facilities" class="py-32">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-24 items-center">
+            <div class="grid grid-cols-2 gap-6">
+                <div class="aspect-square bg-blue-50 rounded-[32px] flex items-center justify-center flex-col p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer reveal">
+                    <div class="p-4 bg-white rounded-2xl shadow-inner mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>
+                    </div>
+                    <span class="font-bold text-gray-800">Vitality Spa</span>
+                </div>
+                <div class="aspect-square bg-yellow-50 rounded-[32px] flex items-center justify-center flex-col p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer reveal">
+                    <div class="p-4 bg-white rounded-2xl shadow-inner mb-4">
+                        <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <span class="font-bold text-gray-800">Elite Dining</span>
+                </div>
+                <div class="aspect-square bg-gray-50 rounded-[32px] flex items-center justify-center flex-col p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer reveal">
+                    <div class="p-4 bg-white rounded-2xl shadow-inner mb-4">
+                        <svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                    <span class="font-bold text-gray-800">Private Fitness</span>
+                </div>
+                <div class="aspect-square bg-blue-50 rounded-[32px] flex items-center justify-center flex-col p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all cursor-pointer reveal">
+                    <div class="p-4 bg-white rounded-2xl shadow-inner mb-4">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    </div>
+                    <span class="font-bold text-gray-800">Aqua Club</span>
+                </div>
+            </div>
+            <div class="reveal">
+                <h2 class="text-5xl font-bold mb-8 leading-tight">Crafted For The Distinguished.</h2>
+                <p class="text-gray-600 text-lg leading-relaxed mb-10">We believe true luxury lies in the details. Whether it's a personalized yoga session at dawn or a private wine tasting in our cellar, our facilities exist to transform your stay into an eternal memory.</p>
+                <a href="#" class="gold-btn py-4 px-10">Explore All Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section id="map-section" class="p-0 h-[500px] overflow-hidden relative">
+        <div class="absolute inset-0 bg-cover bg-center grayscale brightness-75 contrast-125" style="background-image: url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-122.4194,37.7749,12/1200x600?access_token=none')"></div>
+        <div class="relative z-20 h-full flex items-center justify-center bg-blue-900 bg-opacity-20 backdrop-blur-[2px]">
+            <div class="bg-white p-12 rounded-[32px] shadow-2xl text-center max-w-sm mx-4 transform hover:scale-105 transition-transform duration-500">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                </div>
+                <h3 class="font-bold text-2xl mb-2">Find Us</h3>
+                <p class="text-gray-500 mb-8 font-medium">102 Elite Coastline Road,<br>Bay View Sanctuary</p>
+                <button class="outline-btn w-full">Open in Maps</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-16 mb-20">
+            <div class="col-span-1">
+                <h2 class="text-3xl font-bold logo-text mb-6 text-blue-600">BTV</h2>
+                <p class="text-gray-500 text-sm leading-relaxed mb-8">Redefining the essence of travel through unparalleled service and timeless coastal architecture.</p>
+                <div class="flex space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-blue-600 hover:text-white transition cursor-pointer">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-bold mb-8 uppercase text-xs tracking-[0.2em] text-gray-400">Discover</h4>
+                <ul class="text-gray-600 space-y-4 text-sm font-medium">
+                    <li><a href="#" class="hover:text-blue-600 transition">Our Story</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition">Exclusive Offers</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition">Curated Tours</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition">Sustainability</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-8 uppercase text-xs tracking-[0.2em] text-gray-400">Services</h4>
+                <ul class="text-gray-600 space-y-4 text-sm font-medium">
+                    <li><a href="#" class="hover:text-blue-600 transition">Events & Galas</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition">Concierge 24/7</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition">Private Transfer</a></li>
+                    <li><a href="#" class="hover:text-blue-600 transition">Wellness Retreats</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-8 uppercase text-xs tracking-[0.2em] text-gray-400">Stay Updated</h4>
+                <div class="relative mb-10">
+                    <input type="email" placeholder="Email" class="w-full bg-gray-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-blue-100 outline-none text-sm">
+                    <button class="absolute right-2 top-2 bg-blue-600 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-blue-700 transition">GO</button>
+                </div>
+                <button class="flex items-center text-gold font-bold hover:opacity-80 transition group">
+                    <span class="border-b-2 border-transparent group-hover:border-gold pb-1">Rate Your Experience</span>
+                    <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div class="border-t border-gray-100 pt-10 text-center text-xs text-gray-400 font-medium tracking-widest">
+            DESIGNED BY BTV LUXURY MEDIA &copy; 2024.
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener('load', () => {
+            const video = document.getElementById('bg-video');
+            
+            // Initial Hero Animation
+            gsap.from(".hero-logo-outline", {
+                opacity: 0,
+                scale: 0.8,
+                duration: 2.5,
+                ease: "expo.out"
+            });
+
+            // Improved Hero Scroller Logic
+            ScrollTrigger.create({
+                trigger: "#hero",
+                start: "top top",
+                end: "bottom center",
+                scrub: true,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+                    // Shrink and Fade Logo
+                    gsap.set(".hero-logo-outline", {
+                        scale: 1 - (progress * 0.9),
+                        opacity: 1 - (progress * 1.5),
+                        filter: `blur(${progress * 10}px)`
+                    });
+                }
+            });
+
+            // Video Parallax Logic - Counter-movement
+            // This ensures the video stays visible and moves subtly "up" relative to the scroll "down"
+            gsap.to("#bg-video", {
+                y: "-15%", // Move the video UP as we scroll DOWN
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "body",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: true
+                }
+            });
+
+            // Reveal Header on Scroll
+            gsap.to("#main-header", {
+                scrollTrigger: {
+                    trigger: "#about",
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                },
+                opacity: 1,
+                visibility: "visible",
+                y: 0,
+                duration: 1,
+                ease: "power4.out"
+            });
+
+            // Smooth Section Reveals
+            document.querySelectorAll(".reveal").forEach((el) => {
+                gsap.from(el, {
+                    scrollTrigger: {
+                        trigger: el,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
+                    },
+                    y: 60,
+                    opacity: 0,
+                    duration: 1.2,
+                    ease: "power3.out",
+                    clearProps: "all"
+                });
+            });
+        });
+    </script>
+</body>
+</html>
